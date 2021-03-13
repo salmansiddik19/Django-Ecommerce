@@ -1,0 +1,11 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Sign up complete{% endblock %}
+
+{% block content %}
+<div class="card-body">
+    <h3>Account activated</h3>
+    <br>
+    <p>Now you can <a href="{% url 'login' %}"> login </a>your account</p>
+</div>
+{% endblock %}

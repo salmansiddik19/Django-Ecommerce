@@ -1,0 +1,16 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<div class="card-body">
+    <h3>Home page</h3>
+    <br>
+    {% if user.is_authenticated %}
+    <p>Hi, <strong>{{ user.first_name }} {{ user.last_name }} </strong>welcome to my site.</p>
+    {% else %}
+    <p>Welcome to my site.</p>
+    {% endif %}
+    <p><strong>Total user : </strong>{{ count }}</p>
+</div>
+{% endblock %}
