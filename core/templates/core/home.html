@@ -1,11 +1,13 @@
 {% extends 'core/base.html' %}
-
+{% load static %}
 {% block title %}Django-ecommerce{% endblock %}
 
 {% block content %}
 {% for product in products %}
 <div class="card" style="width: 18rem;">
-    <!-- <img src="..." class="card-img-top" alt="..."> -->
+    {% if product.product_image %}
+    <img src="{{ product.product_image.url }}" class="card-img-top" alt="...">
+    {% endif %}
     <div class="card-body">
         <h5 class="card-title">{{ product.product_title }} {{ product.product_name}}</h5>
         <p class="card-text">{{ product.product_price}} TK</p>

@@ -10,14 +10,15 @@ def product_detail(request, pk):
 
 def product_add(request):
     if request.method == 'POST':
-        form = ProductForm(request.POST)
+        form = ProductForm(request.POST, request.FILES or None)
         if form.is_valid():
             form.save()
             # title = form.cleaned_data['product_title']
             # name = form.cleaned_data['product_name']
             # price = form.cleaned_data['product_price']
+            # image = form.cleaned_data['product_image']
             # product = Product(product_title=title,
-            #                   product_name=name, product_price=price)
+            #                   product_name=name, product_price=price, product_image=image)
             # product.save()
             return redirect('home')
     else:
@@ -27,7 +28,8 @@ def product_add(request):
 
 def product_update(request, pk):
     product = get_object_or_404(Product, pk=pk)
-    form = ProductUpdateForm(request.POST or None, instance=product)
+    form = ProductUpdateForm(request.POST or None,
+                             request.FILES or None, instance=product)
     if form.is_valid():
         form.save()
         return redirect('home')

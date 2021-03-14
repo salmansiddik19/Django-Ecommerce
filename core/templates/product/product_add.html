@@ -9,7 +9,7 @@
 {% if user.user_category == 'owner' %}
 <div class="row">
     <div class="col-6">
-        <form method="POST" class="form-control" novalidate>
+        <form method="POST" enctype="multipart/form-data">
             {% csrf_token %}
             {{ form|crispy }}
             <br>
