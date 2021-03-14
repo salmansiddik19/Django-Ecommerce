@@ -11,13 +11,14 @@ from django.template.loader import get_template, render_to_string
 from django.template import Context
 
 from user.models import User
+from product.models import Product
 
 from user.forms import CustomUserCreationForm, CustomUserChangeForm
 
 
 def home(request):
-    count = User.objects.count()
-    return render(request, 'core/home.html', {'count': count})
+    product = Product.objects.all()
+    return render(request, 'core/home.html', {'products': product})
 
 
 def signup(request):

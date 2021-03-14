@@ -2,20 +2,23 @@
 
 {% load crispy_forms_tags %}
 
-{% block title %}Login{% endblock %}
+{% block title %}Add product_detail{% endblock %}
 
 {% block content %}
-<h3>Login</h3>
+<h3>Add Product</h3>
+{% if user.user_category == 'owner' %}
 <div class="row">
     <div class="col-6">
         <form method="POST" class="form-control" novalidate>
             {% csrf_token %}
             {{ form|crispy }}
             <br>
-            <button class="btn btn-info me-2" type="submit">Login</button>
-            <a href="{% url 'password_reset' %}">Forgot your password?</a>
+            <button class="btn btn-info me-2" type="submit">Add Product</button>
         </form>
     </div>
 </div>
+{% else %}
+<p>You are not allow here.</p>
+{% endif %}
 
 {% endblock %}

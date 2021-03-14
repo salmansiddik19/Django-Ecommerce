@@ -1,16 +1,15 @@
 {% extends 'core/base.html' %}
 
-{% block title %}Django-ecommerce{% endblock %}
+{% block title %}{{ product_title }}{% endblock %}
 
 {% block content %}
-{% for product in products %}
 <div class="card" style="width: 18rem;">
     <!-- <img src="..." class="card-img-top" alt="..."> -->
     <div class="card-body">
         <h5 class="card-title">{{ product.product_title }} {{ product.product_name}}</h5>
         <p class="card-text">{{ product.product_price}} TK</p>
-        <a href="{% url 'product_detail' product.id %}" class="btn btn-outline-info">Details</a>
+        <a href="{% url 'product_update' product.id %}" class="btn btn-outline-info">Edit</a>
+        <a href="{% url 'product_delete' product.id %}" class="btn btn-outline-info">Delete</a>
     </div>
 </div>
-{% endfor %}
 {% endblock %}

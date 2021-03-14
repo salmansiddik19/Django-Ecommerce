@@ -1,0 +1,24 @@
+{% extends 'core/base.html' %}
+
+{% load crispy_forms_tags %}
+
+{% block title %}Delete Product{% endblock %}
+
+{% block content %}
+<h3>Delete Product</h3>
+{% if user.user_category == 'owner' %}
+<div class="row">
+    <div class="col-6">
+        <form method="POST">
+            {% csrf_token %}
+            Are you want to delete this item ?
+            <button type="submit" value="Yes" class="btn btn-outline-info">Yes</button>
+            <a href="{% url 'product_detail' product.id %}" class="btn btn-outline-info">No</a>
+        </form>
+    </div>
+</div>
+{% else %}
+<p>You are not allow here.</p>
+{% endif %}
+
+{% endblock %}
