@@ -35,8 +35,14 @@
                             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
                                 data-bs-toggle="dropdown" aria-expanded="false">
                                 {{ user.first_name }} {{ user.last_name }}
+                                {% if user.user_category == 'Owner' %}
+                                ({{ user.user_category }})
+                                {% endif %}
                             </a>
                             <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <li>
+                                    <a class="dropdown-item" href="{% url 'user_edit' user.id %}">User Setting</a>
+                                </li>
                                 <li>
                                     <a class="dropdown-item" href="{% url 'password_change' %}">Change Password</a>
                                 </li>

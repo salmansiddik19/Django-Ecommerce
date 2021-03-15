@@ -2,18 +2,18 @@
 
 {% load crispy_forms_tags %}
 
-{% block title %}Product Update{% endblock %}
+{% block title %}User Setting{% endblock %}
 
 {% block content %}
-<h3>Product Update</h3>
-{% if user.user_category == 'Owner' %}
+<h3>User Setting</h3>
+{% if user.is_authenticated %}
 <div class="row">
     <div class="col-6">
         <form method="POST" enctype="multipart/form-data">
             {% csrf_token %}
             {{ form|crispy }}
             <br>
-            <button class="btn btn-info me-2" type="submit">Update Product</button>
+            <button class="btn btn-info me-2" type="submit">Update Setting</button>
         </form>
     </div>
 </div>

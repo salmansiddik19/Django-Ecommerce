@@ -8,4 +8,5 @@ urlpatterns = [
     path('signuup/activate/<uidb64>/<token>/', views.activate, name='activate'),
     path('signup/comfirm/', views.signup_confirm, name='signup_confirm'),
     path('signup/complete/', views.signup_complete, name='signup_complete'),
+    path('user/<int:pk>/edit/', views.user_edit, name='user_edit'),
 ]

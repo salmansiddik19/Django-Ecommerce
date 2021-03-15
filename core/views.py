@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 from django.contrib.auth import get_user_model
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
@@ -13,7 +13,7 @@ from django.template import Context
 from user.models import User
 from product.models import Product
 
-from user.forms import CustomUserCreationForm, CustomUserChangeForm
+from user.forms import CustomUserCreationForm, CustomUserChangeForm, CustomUserForm
 
 
 def home(request):
@@ -67,3 +67,14 @@ def signup_confirm(request):
 
 def signup_complete(request):
     return render(request, 'registration/signup_complete.html', {})
+
+
+def user_edit(request, pk):
+    user = get_object_or_404(User, pk=pk)
+    form = CustomUserForm(request.POST or None,
+                          request.FILES or None, instance=user)
+    if form.is_valid():
+        user = form.save(commit=False)
+        user.save()
+        return redirect('home')
+    return render(request, 'registration/user_edit.html', {'form': form})
