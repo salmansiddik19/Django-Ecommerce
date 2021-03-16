@@ -17,7 +17,7 @@
         <tbody>
             <tr>
                 <td>{{ user.id }}</td>
-                <td>{{ user.email }}</td>
+                <td><a href="{% url 'user_detail' user.id %}" class="text-decoration-none">{{ user.email }}</a></td>
                 <td>{{ user.first_name }}</td>
                 <td>{{ user.last_name }}</td>
                 <td>{{ user.user_category }}</td>

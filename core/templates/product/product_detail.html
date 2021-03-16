@@ -10,8 +10,12 @@
     <div class="card-body">
         <h5 class="card-title">{{ product.product_title }} {{ product.product_name}}</h5>
         <p class="card-text">{{ product.product_price}} TK</p>
+        {% if user.user_category == 'owner' %}
         <a href="{% url 'product_update' product.id %}" class="btn btn-outline-info">Edit</a>
         <a href="{% url 'product_delete' product.id %}" class="btn btn-outline-info">Delete</a>
+        {% else %}
+        <a href="#" class="btn btn-outline-info">Buy</a>
+        {% endif %}
     </div>
 </div>
 {% endblock %}

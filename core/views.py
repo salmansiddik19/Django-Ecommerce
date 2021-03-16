@@ -32,6 +32,21 @@ def dashboard(request):
     return render(request, 'core/dashboard.html', {})
 
 
+def user_list(request):
+    users = User.objects.all()
+    return render(request, 'dashboard/user_list.html', {'users': users})
+
+
+def user_detail(request, pk):
+    user = get_object_or_404(User, pk=pk)
+    form = CustomUserChangeForm(request.POST or None,
+                                request.FILES or None, instance=user)
+    if form.is_valid():
+        form.save()
+        return redirect('user_list')
+    return render(request, 'dashboard/user_detail.html', {'form': form})
+
+
 def user_signup(request):
     if request.method == 'POST':
         form = UserSignUpForm(request.POST)
@@ -46,11 +61,6 @@ def user_signup(request):
     else:
         form = UserSignUpForm()
     return render(request, 'dashboard/user_signup.html', {'form': form})
-
-
-def user_list(request):
-    users = User.objects.all()
-    return render(request, 'dashboard/user_list.html', {'users': users})
 
 
 def product_list(request):
