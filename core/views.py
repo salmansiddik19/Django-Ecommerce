@@ -1,24 +1,61 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
+
 from django.contrib.auth import get_user_model
+from django.contrib.sites.shortcuts import get_current_site
+
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_text
-from django.contrib.sites.shortcuts import get_current_site
-from user.tokens import account_activation_token
+
+
 from django.core.mail import send_mail, EmailMultiAlternatives
+from django.core.files.base import ContentFile, File
 
 from django.template.loader import get_template, render_to_string
 from django.template import Context
 
 from user.models import User
-from product.models import Product
+from user.tokens import account_activation_token
+from user.forms import CustomUserCreationForm, CustomUserChangeForm, CustomUserForm, UserSignUpForm
 
-from user.forms import CustomUserCreationForm, CustomUserChangeForm, CustomUserForm
+from product.models import Product
 
 
 def home(request):
     product = Product.objects.all()
     return render(request, 'core/home.html', {'products': product})
+
+
+#################  For Dashborad #######################################################################
+
+def dashboard(request):
+    return render(request, 'core/dashboard.html', {})
+
+
+def user_signup(request):
+    if request.method == 'POST':
+        form = UserSignUpForm(request.POST)
+        if form.is_valid():
+            user = form.save(commit=False)
+            email = form.cleaned_data['email']
+            password = form.cleaned_data['password2']
+            first_name = form.cleaned_data['first_name']
+            user.user_info.save(f'user_{first_name}', ContentFile(
+                f'Email:{ email } and Password:{ password }'))
+            return redirect('user_list')
+    else:
+        form = UserSignUpForm()
+    return render(request, 'dashboard/user_signup.html', {'form': form})
+
+
+def user_list(request):
+    users = User.objects.all()
+    return render(request, 'dashboard/user_list.html', {'users': users})
+
+
+def product_list(request):
+    products = Product.objects.all()
+    return render(request, 'dashboard/product_list.html', {'products': products})
 
 
 def signup(request):

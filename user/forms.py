@@ -19,7 +19,16 @@ class CustomUserChangeForm(UserChangeForm):
 
 
 class CustomUserForm(forms.ModelForm):
+
     class Meta:
         model = User
         fields = ('email', 'first_name', 'last_name',
                   'user_category', 'is_active')
+
+
+class UserSignUpForm(UserCreationForm):
+
+    class Meta(UserCreationForm):
+        model = User
+        fields = ('email', 'first_name', 'last_name', 'user_category',
+                  'is_superuser', 'is_staff', 'is_active')

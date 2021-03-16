@@ -102,3 +102,9 @@ ENV/
 
 .DS_Store
 *.sqlite3
+
+# static
+/static/
+
+# media
+/media/

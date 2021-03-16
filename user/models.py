@@ -15,6 +15,7 @@ class User(AbstractUser):
     email = models.EmailField(_('email address'), unique=True)
     user_category = models.CharField(
         max_length=10, choices=CHOICES, default='Customer')
+    user_info = models.FileField(blank=True, null=True, upload_to='files/')
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['first_name', 'last_name', 'user_category']

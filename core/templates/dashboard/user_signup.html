@@ -1,0 +1,17 @@
+{% extends 'core/dashboard.html' %}
+{% load crispy_forms_tags %}
+
+{% block board %}
+<h3>User Signup</h3>
+<div class="table-responsive">
+    <table class="table table-striped table-sm">
+        <form action="" method="POST">
+            {% csrf_token %}
+            {{ form|crispy }}
+            <br>
+            <button class="btn btn-info" type="submit">Sign Up</button>
+        </form>
+
+    </table>
+</div>
+{% endblock %}

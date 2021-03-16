@@ -2,11 +2,11 @@
 
 {% load crispy_forms_tags %}
 
-{% block title %}Add product_detail{% endblock %}
+{% block title %}Add product{% endblock %}
 
 {% block content %}
 <h3>Add Product</h3>
-{% if user.user_category == 'owner' %}
+{% if user.user_category == 'Owner' %}
 <div class="row">
     <div class="col-6">
         <form method="POST" enctype="multipart/form-data">

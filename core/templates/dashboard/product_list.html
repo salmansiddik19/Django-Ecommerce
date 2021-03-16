@@ -1,0 +1,27 @@
+{% extends 'core/dashboard.html' %}
+
+{% block board %}
+<h3>Products</h3>
+<div class="table-responsive">
+    <table class="table table-striped table-sm">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Title</th>
+                <th>Name</th>
+                <th>Price (TK)</th>
+            </tr>
+        </thead>
+        {% for product in products %}
+        <tbody>
+            <tr>
+                <td>{{ product.id }}</td>
+                <td>{{ product.product_title }}</td>
+                <td>{{ product.product_name }}</td>
+                <td>{{ product.product_price }}</td>
+            </tr>
+        </tbody>
+        {% endfor %}
+    </table>
+</div>
+{% endblock %}
