@@ -8,7 +8,7 @@
  - show few querye value, (Last 7 day sell, yearly sell etc)
  - list of order,  products
 4. Account(Administrator, Customer)
- - Insert customer account by admin
+ - Insert and edit customer account by admin
 5. Cart
  - both (loggedin/logout) the shopping cart is an important part of any ecommerce site
 6. Order
