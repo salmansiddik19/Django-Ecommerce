@@ -10,11 +10,10 @@
 4. Account(Administrator, Customer)
  - Insert and edit customer account by admin
 5. Cart
- - both (loggedin/logout) the shopping cart is an important part of any ecommerce site
+ - both (loggedin/logout) users can add products in shopping cart 
 6. Order
 7. Payment
-    just manual
-    verirfy
+ - just manual verirfy
 8. Review
  - Just rating (show what purchased rating)
 
