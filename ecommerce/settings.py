@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'core',
     'user',
     'product',
+    'order',
     # third party
     'six',
     'crispy_forms',

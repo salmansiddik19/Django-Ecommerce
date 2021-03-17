@@ -125,3 +125,11 @@ def user_edit(request, pk):
         user.save()
         return redirect('home')
     return render(request, 'registration/user_edit.html', {'form': form})
+
+
+def cart(request):
+    return render(request, 'core/cart.html', {})
+
+
+def checkout(request):
+    return render(request, 'core/checkout.html', {})
