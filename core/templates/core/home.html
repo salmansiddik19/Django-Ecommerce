@@ -17,7 +17,9 @@
                 {% if user.user_category == 'Owner' %}
                 <a href="{% url 'product_detail' product.id %}" class="btn btn-outline-info">Details</a>
                 {% else %}
-                <a href="{% url 'cart' %}" class="btn btn-outline-info">Add to Cart</a>
+                <button data-product={{product.id}} data-action="add" class="btn btn-outline-info add-to-cart">
+                    Add to Cart
+                </button>
                 <a href="{% url 'product_detail' product.id %}" class="btn btn-outline-info">Details</a>
                 {% endif %}
             </div>

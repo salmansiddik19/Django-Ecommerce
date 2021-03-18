@@ -6,6 +6,10 @@
 
 {% block content %}
 {% if user.is_authenticated %}
+<br>
+<h3>Admin credential</h3>
+<p>You are not allow here.</p>
+{% else %}
 <div class="card-body">
     <h3>Signup</h3>
     <form action="" method="POST">
@@ -15,9 +19,5 @@
         <button class="btn btn-info" type="submit">Sign Up</button>
     </form>
 </div>
-{% else %}
-<br>
-<h3>Admin credential</h3>
-<p>You are not allow here.</p>
 {% endif %}
 {% endblock %}

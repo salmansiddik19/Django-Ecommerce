@@ -1,5 +1,7 @@
+import json
+
 from django.shortcuts import render, redirect, get_object_or_404
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 
 from django.contrib.auth import get_user_model
 from django.contrib.sites.shortcuts import get_current_site
@@ -23,8 +25,25 @@ from order.models import Order, OrderItem
 
 
 def home(request):
+    if request.user.is_authenticated:
+        try:
+            profile = request.user.profile
+        except Profile.DoesNotExist:
+            profile = Profile(
+                user=request.user, name=request.user.first_name, email=request.user.email)
+            profile.save()
+        order, created = Order.objects.get_or_create(
+            profile=profile,
+            complete=False,
+        )
+        items = order.orderitem_set.all()
+        cart_item = order.get_cart_item
+    else:
+        items = []
+        order = {'get_cart_item': 0, 'get_cart_total': 0}
+        cart_item = order['get_cart_item']
     product = Product.objects.all()
-    return render(request, 'core/home.html', {'products': product})
+    return render(request, 'core/home.html', {'products': product, 'cart_item': cart_item})
 
 
 #################  For Dashborad #######################################################################
@@ -130,37 +149,55 @@ def user_edit(request, pk):
 
 def cart(request):
     if request.user.is_authenticated:
-        try:
-            profile = request.user.profile
-        except Profile.DoesNotExist:
-            profile = Profile(
-                user=request.user, name=request.user.first_name, email=request.user.email)
-            profile.save()
+        profile = request.user.profile
         order, created = Order.objects.get_or_create(
             profile=profile,
             complete=False,
         )
         items = order.orderitem_set.all()
+        cart_item = order.get_cart_item
     else:
         items = []
         order = {'get_cart_item': 0, 'get_cart_total': 0}
-    return render(request, 'core/cart.html', {'order': order, 'items': items})
+        cart_item = order['get_cart_item']
+    return render(request, 'core/cart.html', {'order': order, 'items': items, 'cart_item': cart_item})
 
 
 def checkout(request):
     if request.user.is_authenticated:
-        try:
-            profile = request.user.profile
-        except Profile.DoesNotExist:
-            profile = Profile(
-                user=request.user, name=request.user.first_name, email=request.user.email)
-            profile.save()
+        profile = request.user.profile
         order, created = Order.objects.get_or_create(
             profile=profile,
             complete=False,
         )
         items = order.orderitem_set.all()
+        cart_item = order.get_cart_item
     else:
         items = []
         order = {'get_cart_item': 0, 'get_cart_total': 0}
-    return render(request, 'core/checkout.html', {'order': order, 'items': items})
+        cart_item = order['get_cart_item']
+    return render(request, 'core/checkout.html', {'order': order, 'items': items, 'cart_item': cart_item})
+
+
+def update_item(request):
+    data = json.loads(request.body)
+    product_id = data['productId']
+    action = data['action']
+    print('Action:', action)
+    print('Product Id:', product_id)
+    profile = request.user.profile
+    product = Product.objects.get(id=product_id)
+    order, created = Order.objects.get_or_create(
+        profile=profile,
+        complete=False,
+    )
+    order_item, created = OrderItem.objects.get_or_create(
+        order=order, product=product)
+    if action == 'add':
+        order_item.quantity = (order_item.quantity + 1)
+    elif action == 'remove':
+        order_item.quantity = (order_item.quantity - 1)
+    order_item.save()
+    if order_item.quantity <= 0:
+        order_item.delete()
+    return JsonResponse('Item was added', safe=False)

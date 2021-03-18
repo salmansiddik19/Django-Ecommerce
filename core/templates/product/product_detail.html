@@ -15,7 +15,9 @@
         <a href="{% url 'product_update' product.id %}" class="btn btn-outline-info">Edit</a>
         <a href="{% url 'product_delete' product.id %}" class="btn btn-outline-info">Delete</a>
         {% else %}
-        <a href="#" class="btn btn-outline-info">Add to Cart</a>
+        <button data-product={{product.id}} data-action="add" class="btn btn-outline-info add-to-cart">
+            Add to Cart
+        </button>
         {% endif %}
     </div>
 </div>
