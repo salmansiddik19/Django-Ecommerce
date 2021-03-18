@@ -14,11 +14,12 @@ from django.core.files.base import ContentFile, File
 from django.template.loader import get_template, render_to_string
 from django.template import Context
 
-from user.models import User
+from user.models import User, Profile
 from user.tokens import account_activation_token
 from user.forms import CustomUserCreationForm, CustomUserChangeForm, CustomUserForm, UserSignUpForm
 
 from product.models import Product
+from order.models import Order, OrderItem
 
 
 def home(request):
@@ -128,8 +129,38 @@ def user_edit(request, pk):
 
 
 def cart(request):
-    return render(request, 'core/cart.html', {})
+    if request.user.is_authenticated:
+        try:
+            profile = request.user.profile
+        except Profile.DoesNotExist:
+            profile = Profile(
+                user=request.user, name=request.user.first_name, email=request.user.email)
+            profile.save()
+        order, created = Order.objects.get_or_create(
+            profile=profile,
+            complete=False,
+        )
+        items = order.orderitem_set.all()
+    else:
+        items = []
+        order = {'get_cart_item': 0, 'get_cart_total': 0}
+    return render(request, 'core/cart.html', {'order': order, 'items': items})
 
 
 def checkout(request):
-    return render(request, 'core/checkout.html', {})
+    if request.user.is_authenticated:
+        try:
+            profile = request.user.profile
+        except Profile.DoesNotExist:
+            profile = Profile(
+                user=request.user, name=request.user.first_name, email=request.user.email)
+            profile.save()
+        order, created = Order.objects.get_or_create(
+            profile=profile,
+            complete=False,
+        )
+        items = order.orderitem_set.all()
+    else:
+        items = []
+        order = {'get_cart_item': 0, 'get_cart_total': 0}
+    return render(request, 'core/checkout.html', {'order': order, 'items': items})
