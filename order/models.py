@@ -2,6 +2,8 @@ from django.db import models
 from user.models import Profile
 from product.models import Product
 
+from datetime import timezone
+
 
 class Order(models.Model):
     profile = models.ForeignKey(
@@ -11,7 +13,7 @@ class Order(models.Model):
     transaction_id = models.CharField(max_length=100, null=True)
 
     def __str__(self):
-        return str(self.id)
+        return str(self.transaction_id)
 
     @property
     def get_cart_total(self):

@@ -1,4 +1,5 @@
 import json
+import datetime
 
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse, JsonResponse
@@ -201,3 +202,22 @@ def update_item(request):
     if order_item.quantity <= 0:
         order_item.delete()
     return JsonResponse('Item was added', safe=False)
+
+
+def process_order(request):
+    transaction_id = datetime.datetime.now().timestamp()
+    data = json.loads(request.body)
+    if request.user.is_authenticated:
+        profile = request.user.profile
+        order, created = Order.objects.get_or_create(
+            profile=profile,
+            complete=False,
+        )
+        total = int(data['form']['total'])
+        order.transaction_id = transaction_id
+        if total == order.get_cart_total:
+            order.complete = True
+            order.save()
+    else:
+        print('User is not authenticated...')
+    return JsonResponse('Order processing...', safe=False)

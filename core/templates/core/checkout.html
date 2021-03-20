@@ -19,9 +19,11 @@
             </form>
         </div>
 
-        <br>
         <div class="box-element hidden" id="payment-info">
-            <small>Paypal Options</small>
+            <small>Payment Option</small>
+            <br>
+            <br>
+            <button class="btn btn-outline-info" id="make-payment">Make Payment</button>
         </div>
 
     </div>
@@ -51,4 +53,65 @@
         </div>
     </div>
 </div>
+
+<script type="text/javascript">
+
+    var total = '{{order.get_cart_total}}'
+
+    if (user != 'AnonymousUser') {
+        document.getElementById('user-info').innerHTML = ''
+        document.getElementById('form-button').classList.add('hidden')
+        document.getElementById('payment-info').classList.remove('hidden')
+    }
+
+    var form = document.getElementById('form')
+
+    form.addEventListener('submit', function (e) {
+        e.preventDefault()
+        console.log('Form submitted ...')
+        document.getElementById('form-button').classList.add('hidden')
+        document.getElementById('payment-info').classList.remove('hidden')
+    })
+
+    document.getElementById('make-payment').addEventListener('click', function (e) {
+        submitFormData()
+    })
+
+    function submitFormData() {
+        console.log('Payment button clicked...')
+
+        var userFormDta = {
+            'email': null,
+            'total': total,
+        }
+
+        if (user == 'AnonymousUser') {
+            userFormDta.email = form.email.value
+        }
+
+        var url = '/process_order/'
+
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrftoken
+            },
+            body: JSON.stringify({ 'form': userFormDta })
+        })
+            .then((response) => {
+                return response.json()
+            })
+
+            .then((data) => {
+                console.log('Success:', data)
+                alert('Transaction completed')
+                window.location.href = "{% url 'home' %}"
+            })
+
+
+    }
+
+</script>
+
 {% endblock %}
