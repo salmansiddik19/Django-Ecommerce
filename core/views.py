@@ -24,25 +24,13 @@ from user.forms import CustomUserCreationForm, CustomUserChangeForm, CustomUserF
 from product.models import Product
 from order.models import Order, OrderItem
 
+from .utils import cookie_cart, cart_data, guest_order
+
 
 def home(request):
-    if request.user.is_authenticated:
-        try:
-            profile = request.user.profile
-        except Profile.DoesNotExist:
-            profile = Profile(
-                user=request.user, name=request.user.first_name, email=request.user.email)
-            profile.save()
-        order, created = Order.objects.get_or_create(
-            profile=profile,
-            complete=False,
-        )
-        items = order.orderitem_set.all()
-        cart_item = order.get_cart_item
-    else:
-        items = []
-        order = {'get_cart_item': 0, 'get_cart_total': 0}
-        cart_item = order['get_cart_item']
+    data = cart_data(request)
+    cart_item = data['cart_item']
+
     product = Product.objects.all()
     return render(request, 'core/home.html', {'products': product, 'cart_item': cart_item})
 
@@ -149,34 +137,18 @@ def user_edit(request, pk):
 
 
 def cart(request):
-    if request.user.is_authenticated:
-        profile = request.user.profile
-        order, created = Order.objects.get_or_create(
-            profile=profile,
-            complete=False,
-        )
-        items = order.orderitem_set.all()
-        cart_item = order.get_cart_item
-    else:
-        items = []
-        order = {'get_cart_item': 0, 'get_cart_total': 0}
-        cart_item = order['get_cart_item']
+    data = cart_data(request)
+    order = data['order']
+    items = data['items']
+    cart_item = data['cart_item']
     return render(request, 'core/cart.html', {'order': order, 'items': items, 'cart_item': cart_item})
 
 
 def checkout(request):
-    if request.user.is_authenticated:
-        profile = request.user.profile
-        order, created = Order.objects.get_or_create(
-            profile=profile,
-            complete=False,
-        )
-        items = order.orderitem_set.all()
-        cart_item = order.get_cart_item
-    else:
-        items = []
-        order = {'get_cart_item': 0, 'get_cart_total': 0}
-        cart_item = order['get_cart_item']
+    data = cart_data(request)
+    order = data['order']
+    items = data['items']
+    cart_item = data['cart_item']
     return render(request, 'core/checkout.html', {'order': order, 'items': items, 'cart_item': cart_item})
 
 
@@ -207,17 +179,19 @@ def update_item(request):
 def process_order(request):
     transaction_id = datetime.datetime.now().timestamp()
     data = json.loads(request.body)
+
     if request.user.is_authenticated:
         profile = request.user.profile
         order, created = Order.objects.get_or_create(
             profile=profile,
             complete=False,
         )
-        total = int(data['form']['total'])
-        order.transaction_id = transaction_id
-        if total == order.get_cart_total:
-            order.complete = True
-            order.save()
     else:
-        print('User is not authenticated...')
+        profile, order = guest_order(request, data)
+
+    total = int(data['form']['total'])
+    order.transaction_id = transaction_id
+    if total == order.get_cart_total:
+        order.complete = True
+        order.save()
     return JsonResponse('Order processing...', safe=False)
