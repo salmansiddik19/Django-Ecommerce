@@ -1,11 +1,14 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Product
 from .forms import ProductForm, ProductUpdateForm
+from core.utils import cart_data
 
 
 def product_detail(request, pk):
+    data = cart_data(request)
+    cart_item = data['cart_item']
     product = Product.objects.get(pk=pk)
-    return render(request, 'product/product_detail.html', {'product': product})
+    return render(request, 'product/product_detail.html', {'product': product, 'cart_item': cart_item})
 
 
 def product_add(request):
