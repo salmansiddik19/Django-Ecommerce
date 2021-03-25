@@ -11,6 +11,79 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <style>
+        .checked {
+            color: orange;
+        }
+
+        .rating {
+            display: inline-block;
+            position: relative;
+            height: 30px;
+            line-height: 30px;
+            font-size: 20px;
+        }
+
+        .rating label {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            cursor: pointer;
+        }
+
+        .rating label:last-child {
+            position: static;
+        }
+
+        .rating label:nth-child(1) {
+            z-index: 5;
+        }
+
+        .rating label:nth-child(2) {
+            z-index: 4;
+        }
+
+        .rating label:nth-child(3) {
+            z-index: 3;
+        }
+
+        .rating label:nth-child(4) {
+            z-index: 2;
+        }
+
+        .rating label:nth-child(5) {
+            z-index: 1;
+        }
+
+        .rating label input {
+            position: absolute;
+            top: 0;
+            left: 0;
+            opacity: 0;
+        }
+
+        .rating label .icon {
+            float: left;
+            color: transparent;
+        }
+
+        .rating label:last-child .icon {
+            color: #000;
+        }
+
+        .rating:not(:hover) label input:checked~.icon,
+        .rating:hover label:hover input~.icon {
+            color: rgb(255, 166, 0);
+        }
+
+        .rating label input:focus:not(:checked)~.icon:last-child {
+            color: #000;
+            text-shadow: 0 0 5px rgb(255, 166, 0);
+        }
+    </style>
+
     <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
 
     <script type="text/javascript">

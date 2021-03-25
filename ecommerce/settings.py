@@ -38,14 +38,18 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    # third party
+    'rest_framework',
+    'six',
+    'crispy_forms',
+
     # local
     'core',
     'user',
     'product',
     'order',
-    # third party
-    'six',
-    'crispy_forms',
+
 
 ]
 
@@ -146,3 +150,11 @@ LOGOUT_REDIRECT_URL = 'home'
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
+
+REST_FRAMEWORK = {
+    # Use Django's standard `django.contrib.auth` permissions,
+    # or allow read-only access for unauthenticated users.
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly',
+    ]
+}

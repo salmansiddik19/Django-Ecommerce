@@ -1,7 +1,14 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Product
+from .models import Product, ProductRating
 from .forms import ProductForm, ProductUpdateForm
 from core.utils import cart_data
+
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework.exceptions import PermissionDenied
+
+from .serializers import ProductRatingSerializer
 
 
 def product_detail(request, pk):
@@ -45,3 +52,34 @@ def product_delete(request, pk):
         product.delete()
         return redirect('home')
     return render(request, 'product/product_delete.html', {"product": product})
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def product_rating_list(request):
+    rating = ProductRating.objects.all().order_by('-id')
+    serializer = ProductRatingSerializer(rating, many=True)
+    return Response(serializer.data)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def product_rating_detail(request, pk):
+    rating = ProductRating.objects.get(pk=pk)
+    serializer = ProductRatingSerializer(rating, many=False)
+    return Response(serializer.data)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def product_rating_create(request):
+    serializer = ProductRatingSerializer(data=request.data)
+    if serializer.is_valid():
+        user = serializer.validated_data['user']
+        if user != request.user:
+            raise PermissionDenied('Wrong user')
+        elif ProductRating.objects.filter(product=serializer.validated_data['product']).exists():
+            raise PermissionDenied('already done...')
+        else:
+            serializer.save()
+    return Response(serializer.data)

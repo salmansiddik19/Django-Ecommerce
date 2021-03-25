@@ -2,3 +2,4 @@ django==3.1.7
 six==1.15.0
 django-crispy-forms==1.11.1
 pillow==8.1.2
+djangorestframework==3.12.2
