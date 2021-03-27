@@ -9,6 +9,8 @@ from rest_framework.response import Response
 from rest_framework.exceptions import PermissionDenied
 
 from .serializers import ProductRatingSerializer
+from django.db.models import Count, Avg, Sum, Q
+from rest_framework import status
 
 
 def product_detail(request, pk):
@@ -54,12 +56,16 @@ def product_delete(request, pk):
     return render(request, 'product/product_delete.html', {"product": product})
 
 
+# avg rating of products
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
-def product_rating_list(request):
-    rating = ProductRating.objects.all().order_by('-id')
-    serializer = ProductRatingSerializer(rating, many=True)
-    return Response(serializer.data)
+def product_rating_avg(request):
+    # rating = ProductRating.objects.all().order_by('-id')
+    total_rating = Product.objects.values('id').annotate(
+        average_rating=Avg('productrating__rating'))
+    print(total_rating)
+    # serializer = ProductRatingSerializer(total_rating, many=True)
+    return Response(total_rating)
 
 
 @api_view(['GET'])
@@ -75,11 +81,9 @@ def product_rating_detail(request, pk):
 def product_rating_create(request):
     serializer = ProductRatingSerializer(data=request.data)
     if serializer.is_valid():
-        user = serializer.validated_data['user']
-        if user != request.user:
-            raise PermissionDenied('Wrong user')
-        elif ProductRating.objects.filter(product=serializer.validated_data['product']).exists():
-            raise PermissionDenied('already done...')
+        if ProductRating.objects.filter(Q(product=serializer.validated_data['product']) & Q(user=request.user)).exists():
+            raise PermissionDenied('Already done or Wrong user...')
         else:
             serializer.save()
+            return Response(status=status.HTTP_201_CREATED)
     return Response(serializer.data)
