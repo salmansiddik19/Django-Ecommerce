@@ -108,3 +108,6 @@ ENV/
 
 # media
 /media/
+
+# file
+*.txt

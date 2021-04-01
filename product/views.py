@@ -56,34 +56,96 @@ def product_delete(request, pk):
     return render(request, 'product/product_delete.html', {"product": product})
 
 
-# avg rating of products
+# rating information of products
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
-def product_rating_avg(request):
-    # rating = ProductRating.objects.all().order_by('-id')
-    total_rating = Product.objects.values('id').annotate(
-        average_rating=Avg('productrating__rating'))
-    print(total_rating)
-    # serializer = ProductRatingSerializer(total_rating, many=True)
-    return Response(total_rating)
+def product_rating_avg(request, pk):
+    product = get_object_or_404(Product, pk=pk)
+    rating_list = product.productrating_set.all().values('user', 'rating')
+    average_rating = get_object_or_404(
+        Product.objects.annotate(avg_rating=Avg(
+            'productrating__rating')).values('id', 'avg_rating'),
+        pk=pk
+    )
+    rating_info = {
+        'average_rating': average_rating,
+        'list_of_ratings': rating_list,
+    }
+    return Response(rating_info)
 
 
+# proudct details page a ai ulr a reqeust kobo, oi sinlge proudct ar avg and list of rating paor jnne, tarpor js dia dui ta value append korbo
+
+
+# 3 way
+#     Head
+#     Body
+#     Path param
+
+
+# cata_dic = {
+#     'list_of_ratings': total_rating
+#     'avg_ratings' 3.6
+# }
+
+
+# aikhane console.log korar kotha chilo, bakita ami dekhay dibo
+# ajax(fetch) dia rating add kora dekhabo
+
+# rating's deatil view
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def product_rating_detail(request, pk):
-    rating = ProductRating.objects.get(pk=pk)
+    rating = get_object_or_404(ProductRating, pk=pk)
     serializer = ProductRatingSerializer(rating, many=False)
     return Response(serializer.data)
 
 
+# rating's create view
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def product_rating_create(request):
-    serializer = ProductRatingSerializer(data=request.data)
+    serializer = ProductRatingSerializer(
+        data=request.data, context={'request': request})
     if serializer.is_valid():
         if ProductRating.objects.filter(Q(product=serializer.validated_data['product']) & Q(user=request.user)).exists():
             raise PermissionDenied('Already done or Wrong user...')
         else:
-            serializer.save()
-            return Response(status=status.HTTP_201_CREATED)
+            serializer.save(user=request.user)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
     return Response(serializer.data)
+
+
+# rating's update view
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def product_rating_update(request, pk):
+    rating = get_object_or_404(ProductRating, pk=pk)
+    print(rating.user)
+    if rating.user == request.user:
+        serializer = ProductRatingSerializer(
+            instance=rating, data=request.data, context={'request': request})
+        if serializer.is_valid():
+            if rating.product != serializer.validated_data['product']:
+                return Response('Wrong product')
+            else:
+                if rating.update_count < 2:
+                    rating.update_count += 1
+                    serializer.save()
+                    print(serializer.data)
+                    return Response(serializer.data)
+                else:
+                    return Response('You are not allowed to update')
+                return Response(serializer.data)
+        else:
+            return Response('You are not allowed for update...')
+    return Response(serializer.data)
+
+
+# rating's delete view
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
+def product_rating_delete(request, pk):
+    rating = get_object_or_404(ProductRating, pk=pk)
+    rating.delete()
+    return Response('Delete Successfully...')

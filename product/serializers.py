@@ -5,6 +5,9 @@ from rest_framework.response import Response
 
 
 class ProductRatingSerializer(serializers.ModelSerializer):
+    user = serializers.PrimaryKeyRelatedField(
+        read_only=True, default=serializers.CurrentUserDefault())
+
     class Meta:
         model = ProductRating
-        fields = '__all__'
+        fields = ('id', 'user', 'product', 'rating', 'update_count')
