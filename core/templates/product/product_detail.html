@@ -10,6 +10,7 @@
     <div class="card-body">
         <h5 class="card-title">{{ product.product_title }} {{ product.product_name}}</h5>
         <p class="card-text">${{ product.product_price}}</p>
+        <p class="card-text">Rating <span class="rating-val">-</span>/5</p>
         <hr>
         {% if user.user_category == 'Owner' %}
         <a href="{% url 'product_update' product.id %}" class="btn btn-outline-info">Edit</a>
@@ -22,7 +23,7 @@
     </div>
 </div>
 
-
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script type="text/javascript">
     // avg rating
     productRatingAvg()
@@ -31,7 +32,8 @@
         fetch(url)
             .then((resp) => resp.json())
             .then(function (data) {
-                console.log(data)
+                document.getElementsByClass('---').innerHTML()
+                $('.rating-val').html(data.average_rating.avg_rating)
             })
     }
 </script>
